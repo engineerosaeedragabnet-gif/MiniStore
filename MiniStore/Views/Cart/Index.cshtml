@@ -1,0 +1,66 @@
+﻿@model CartViewModel
+@{
+    ViewData["Title"] = "سلة المشتريات";
+}
+
+<h2 class="mb-4">🛒 سلة المشتريات</h2>
+
+@if (!Model.Items.Any())
+{
+    <div class="alert alert-info">السلة فارغة. <a asp-controller="Products" asp-action="Index">تصفح المنتجات</a></div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle bg-white shadow-sm">
+            <thead class="table-dark">
+                <tr>
+                    <th>المنتج</th>
+                    <th>السعر</th>
+                    <th style="width:170px;">الكمية</th>
+                    <th>الإجمالي</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>
+                            <img src="@item.ImageUrl" width="60" class="rounded me-2" alt="" />
+                            @item.Name
+                        </td>
+                        <td>@item.Price.ToString("N2")</td>
+                        <td>
+                            <form asp-action="Update" method="post" class="d-flex gap-1">
+                                <input type="hidden" name="id" value="@item.ProductId" />
+                                <input type="number" name="quantity" value="@item.Quantity" min="0" class="form-control form-control-sm" />
+                                <button class="btn btn-sm btn-outline-secondary">تحديث</button>
+                            </form>
+                        </td>
+                        <td class="fw-bold">@item.Total.ToString("N2")</td>
+                        <td>
+                            <form asp-action="Remove" method="post">
+                                <input type="hidden" name="id" value="@item.ProductId" />
+                                <button class="btn btn-sm btn-danger">حذف</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr class="table-light">
+                    <td colspan="3" class="text-end fw-bold">الإجمالي الكلي (@Model.TotalQuantity قطعة)</td>
+                    <td colspan="2" class="fw-bold text-success fs-5">@Model.GrandTotal.ToString("N2") ج.م</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <a asp-controller="Products" asp-action="Index" class="btn btn-outline-dark">متابعة التسوق</a>
+        <form asp-action="Clear" method="post">
+            <button class="btn btn-outline-danger">تفريغ السلة</button>
+        </form>
+    </div>
+}

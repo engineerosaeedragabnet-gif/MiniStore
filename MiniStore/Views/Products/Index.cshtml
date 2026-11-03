@@ -1,0 +1,61 @@
+﻿@model ProductListViewModel
+@{
+    ViewData["Title"] = "المنتجات";
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+}
+
+<div class="row">
+    <!-- التصنيفات -->
+    <aside class="col-md-3 mb-4">
+        <form method="get" class="input-group mb-3">
+            <input type="text" name="search" value="@Model.Search" class="form-control" placeholder="ابحث عن منتج..." />
+            <button class="btn btn-dark">بحث</button>
+        </form>
+
+        <div class="list-group shadow-sm">
+            <a asp-action="Index" class="list-group-item list-group-item-action @(Model.SelectedCategoryId is null ? "active" : "")">
+                كل التصنيفات
+            </a>
+            @foreach (var c in Model.Categories)
+            {
+                <a asp-action="Index" asp-route-categoryId="@c.Id"
+                   class="list-group-item list-group-item-action @(Model.SelectedCategoryId == c.Id ? "active" : "")">
+                    @c.Name
+                </a>
+            }
+        </div>
+    </aside>
+
+    <!-- المنتجات -->
+    <section class="col-md-9">
+        @if (!Model.Products.Any())
+        {
+            <div class="alert alert-warning">لا توجد منتجات مطابقة.</div>
+        }
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+            @foreach (var p in Model.Products)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <img src="@p.ImageUrl" class="card-img-top" alt="@p.Name" />
+                        <div class="card-body d-flex flex-column">
+                            <span class="badge bg-secondary align-self-start mb-2">@p.Category?.Name</span>
+                            <h5 class="card-title">@p.Name</h5>
+                            <p class="card-text text-muted small">@p.Description</p>
+                            <p class="fw-bold text-success mt-auto">@p.Price.ToString("N2") ج.م</p>
+
+                            <div class="d-flex gap-2">
+                                <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-outline-dark btn-sm flex-fill">التفاصيل</a>
+                                <form asp-controller="Cart" asp-action="Add" method="post" class="flex-fill">
+                                    <input type="hidden" name="id" value="@p.Id" />
+                                    <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                    <button class="btn btn-primary btn-sm w-100">أضف للسلة</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+</div>

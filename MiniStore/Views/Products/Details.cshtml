@@ -1,0 +1,28 @@
+﻿@model Product
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<a asp-action="Index" class="btn btn-link mb-3">← العودة للمنتجات</a>
+
+<div class="card shadow-sm">
+    <div class="row g-0">
+        <div class="col-md-5">
+            <img src="@Model.ImageUrl" class="img-fluid rounded-start w-100" alt="@Model.Name" />
+        </div>
+        <div class="col-md-7">
+            <div class="card-body p-4">
+                <span class="badge bg-secondary mb-2">@Model.Category?.Name</span>
+                <h2 class="card-title">@Model.Name</h2>
+                <p class="card-text">@Model.Description</p>
+                <h4 class="text-success mb-4">@Model.Price.ToString("N2") ج.م</h4>
+
+                <form asp-controller="Cart" asp-action="Add" method="post" class="d-flex gap-2" style="max-width: 300px;">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <input type="number" name="quantity" value="1" min="1" class="form-control" />
+                    <button class="btn btn-primary text-nowrap">أضف للسلة</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
